@@ -18,7 +18,7 @@ public class Main extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		img = new Texture("safety_santa_player.png");
 	}
 
 	@Override
