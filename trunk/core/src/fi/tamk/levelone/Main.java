@@ -4,13 +4,17 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import java.awt.Rectangle;
 
 public class Main extends Game {
 	SpriteBatch batch;
 	Texture img;
-	
+
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -25,4 +29,9 @@ public class Main extends Game {
 		batch.draw(img, 0, 0);
 		batch.end();
 	}
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
 }
