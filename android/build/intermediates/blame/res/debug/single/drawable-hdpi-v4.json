@@ -1,5 +1,9 @@
 [
     {
+        "merged": "D:\\Androidsoftat\\Safety Santa2\\android\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "D:\\Androidsoftat\\Safety Santa2\\android\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
         "merged": "D:\\Androidsoftat\\Safety Santa\\android\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
         "source": "D:\\Androidsoftat\\Safety Santa\\android\\res\\drawable-hdpi\\ic_launcher.png"
     }
