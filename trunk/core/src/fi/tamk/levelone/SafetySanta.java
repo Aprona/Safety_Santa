@@ -18,7 +18,7 @@ public class SafetySanta {
 
     private Texture santaImg;
     private Rectangle santaRectangle;
-    private float santaSpeed = 2 / 100f;
+    private float santaSpeed = 2f;
     private float delta = Gdx.graphics.getDeltaTime();
     private GameScreen gameScreen;
 
@@ -34,30 +34,34 @@ public class SafetySanta {
 
             if (touchPos.x  > gameScreen.buttonActionRect.x && touchPos.x < gameScreen.buttonActionRect.x + gameScreen.buttonActionRect.getWidth() &&
                     touchPos.y > gameScreen.buttonActionRect.y && touchPos.y < gameScreen.buttonActionRect.y + gameScreen.buttonActionRect.getHeight()) {
-                    Gdx.app.log("action button", "");
+                    checkAction();
             }
 
             if (touchPos.x  > gameScreen.buttonLeftRect.x && touchPos.x < gameScreen.buttonLeftRect.x + gameScreen.buttonLeftRect.getWidth() &&
                     touchPos.y > gameScreen.buttonLeftRect.y && touchPos.y < gameScreen.buttonLeftRect.y + gameScreen.buttonLeftRect.getHeight()) {
-                santaRectangle.x -= santaSpeed + delta;
+                santaRectangle.x -= santaSpeed * delta;
             }
 
             if (touchPos.x  > gameScreen.buttonRightRect.x && touchPos.x < gameScreen.buttonRightRect.x + gameScreen.buttonRightRect.getWidth() &&
                     touchPos.y > gameScreen.buttonRightRect.y && touchPos.y < gameScreen.buttonRightRect.y + gameScreen.buttonRightRect.getHeight()) {
-                santaRectangle.x += santaSpeed + delta;
+                santaRectangle.x += santaSpeed * delta;
             }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) {
-            santaRectangle.x -= santaSpeed + delta;
+            santaRectangle.x -= santaSpeed * delta;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)) {
-            santaRectangle.x += santaSpeed + delta;
+            santaRectangle.x += santaSpeed * delta;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)) {
-            santaRectangle.y += santaSpeed + delta;
+            santaRectangle.y += santaSpeed * delta;
         }
+    }
+
+    private void checkAction () {
+
     }
 
     public void santaDraw (SpriteBatch sp)  {

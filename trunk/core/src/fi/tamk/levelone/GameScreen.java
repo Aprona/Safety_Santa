@@ -68,16 +68,14 @@ public class GameScreen implements Screen {
             camera.unproject(touchPos);
             safetySanta.santaUpdate(touchPos);
 
-            Gdx.app.log("touchPosX", String.valueOf(touchPos.x));
-            Gdx.app.log("touchPosY", String.valueOf(touchPos.y));
+            // Gdx.app.log("touchPosX", String.valueOf(touchPos.x));
+            // Gdx.app.log("touchPosY", String.valueOf(touchPos.y));
         }
-        // Gdx.app.log("", "gameScreen");
 
         batch.begin();
         drawButtons();
         safetySanta.santaDraw(batch);
         batch.end();
-
     }
 
     public void drawButtons () {
