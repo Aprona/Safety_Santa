@@ -1,10 +1,14 @@
 [
     {
-        "merged": "D:\\Androidsoftat\\Safety Santa2\\android\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
-        "source": "D:\\Androidsoftat\\Safety Santa2\\android\\res\\drawable-hdpi\\ic_launcher.png"
-    },
-    {
         "merged": "D:\\Androidsoftat\\Safety Santa\\android\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
         "source": "D:\\Androidsoftat\\Safety Santa\\android\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "U:\\1-vuosi\\Level1\\SafetySanta\\android\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "U:\\1-vuosi\\Level1\\SafetySanta\\android\\res\\drawable-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\Androidsoftat\\Safety Santa2\\android\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "D:\\Androidsoftat\\Safety Santa2\\android\\res\\drawable-hdpi\\ic_launcher.png"
     }
 ]

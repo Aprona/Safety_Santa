@@ -15,12 +15,28 @@ import java.awt.Rectangle;
 public class GameScreen implements Screen {
 
     private Main game;
-    private OrthographicCamera camera;
+    public OrthographicCamera camera;
     private SpriteBatch batch;
     private SafetySanta safetySanta;
+
+    private float PADDING = 0.2f;
+
     private Texture buttonActionImg = new Texture ("button_action.png");
+    public Rectangle buttonActionRect = new Rectangle(
+            (int)(8 - buttonActionImg.getWidth() / 100f - PADDING),
+            (int)(0 + PADDING),
+            buttonActionImg.getWidth() / 100, buttonActionImg.getHeight() / 100);
     private Texture buttonLeftImg = new Texture ("button_left.png");
+    public  Rectangle buttonLeftRect = new Rectangle(
+            (int)(0 + PADDING),
+            (int)(0 + PADDING),
+            buttonLeftImg.getWidth() / 100, buttonLeftImg.getHeight() / 100);
     private Texture buttonRightImg = new Texture ("button_right.png");
+    public Rectangle buttonRightRect = new Rectangle(
+            1,
+            (int)(0 + PADDING),
+            buttonRightImg.getWidth() / 100, buttonRightImg.getHeight() / 100);
+
 
     public GameScreen(Main g) {
         this.game = g;
@@ -28,7 +44,7 @@ public class GameScreen implements Screen {
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, 8f, 4.8F);
 
-        safetySanta = new SafetySanta();
+        safetySanta = new SafetySanta(this);
     }
 
     @Override
@@ -41,18 +57,36 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         clearScreen();
 
-        Gdx.app.log("", "gameScreen");
+        // Gdx.app.log("", "gameScreen");
+
+        safetySanta.santaUpdate();
 
         batch.begin();
         drawButtons();
+        safetySanta.santaDraw(batch);
         batch.end();
 
     }
 
     public void drawButtons () {
-        batch.draw(buttonActionImg, 7, 0);
-        batch.draw(buttonLeftImg, 0, 0);
-        batch.draw(buttonRightImg, 1, 0);
+        batch.draw(
+                buttonActionImg,
+                buttonActionRect.x,
+                buttonActionRect.y,
+                buttonActionImg.getWidth() / 100f,
+                buttonActionImg.getHeight() / 100f);
+        batch.draw(
+                buttonLeftImg,
+                buttonLeftRect.x,
+                buttonLeftRect.y,
+                buttonLeftImg.getWidth() / 100f,
+                buttonRightImg.getHeight() / 100f);
+        batch.draw(
+                buttonRightImg,
+                buttonRightRect.x,
+                buttonRightRect.y,
+                buttonRightImg.getWidth() / 100f,
+                buttonRightImg.getHeight() / 100f);
     }
 
     @Override
