@@ -3,6 +3,7 @@ package fi.tamk.levelone;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -14,7 +15,7 @@ import javafx.scene.Camera;
 /**
  * Created by Ville on 24.2.2016.
  */
-public class SafetySanta {
+public class SafetySanta{
 
     private Texture santaImg;
     private Rectangle santaRectangle;
@@ -47,21 +48,45 @@ public class SafetySanta {
                 santaRectangle.x += santaSpeed * delta;
             }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) {
-            santaRectangle.x -= santaSpeed * delta;
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)) {
-            santaRectangle.x += santaSpeed * delta;
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)) {
-            santaRectangle.y += santaSpeed * delta;
-        }
     }
 
     private void checkAction () {
+        changeFloor();
 
+    }
+
+    public void moveSantaKeyboard() {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            santaRectangle.x -= santaSpeed * delta;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            santaRectangle.x += santaSpeed * delta;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            santaRectangle.y += santaSpeed * delta;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            santaRectangle.y -= santaSpeed * delta;
+        }
+    }
+
+    public float getX() {
+        return santaRectangle.getX();
+    }
+
+    public float getY() {
+        return santaRectangle.getY();
+    }
+
+    public void setX(float x) {
+        santaRectangle.setX(x);
+    }
+
+    public void setY(float y) {
+        santaRectangle.setY(y);
     }
 
     public void santaDraw (SpriteBatch sp)  {
@@ -73,8 +98,14 @@ public class SafetySanta {
     }
 
     public void changeFloor() {
-        if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
 
-        }
+    }
+
+    public float getRectangleWidth() {
+        return santaRectangle.getWidth();
+    }
+
+    public float getRectangleHeight() {
+        return santaRectangle.getHeight();
     }
 }

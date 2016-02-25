@@ -30,7 +30,6 @@ public class Main extends Game {
     public SpriteBatch getBatch() {
         return batch;
     }
-
 	public void clearScreen () {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
