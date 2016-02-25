@@ -77,4 +77,10 @@ public class SafetySanta {
                 santaImg.getWidth() / 100f,
                 santaImg.getHeight() / 100f);
     }
+
+    public void changeFloor() {
+        if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
+            
+        }
+    }
 }
