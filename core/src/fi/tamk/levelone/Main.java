@@ -12,26 +12,29 @@ import java.awt.Rectangle;
 
 public class Main extends Game {
 	SpriteBatch batch;
-	Texture img;
 
+	GameScreen gameScreen;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("safety_santa_player.png");
+		gameScreen = new GameScreen(this);
+		setScreen(gameScreen);
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+		super.render();
 	}
 
     public SpriteBatch getBatch() {
         return batch;
     }
 
+	public void clearScreen () {
+		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	}
 }
+
+
