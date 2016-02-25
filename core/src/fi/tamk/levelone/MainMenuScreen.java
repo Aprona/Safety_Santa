@@ -1,6 +1,7 @@
 package fi.tamk.levelone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -37,6 +38,11 @@ public class MainMenuScreen implements Screen {
         batch.begin();
 
         batch.end();
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            game.changeScreen("gameScreen");
+            dispose();
+        }
+
     }
 
     @Override

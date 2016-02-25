@@ -42,6 +42,11 @@ public class Main extends Game {
             mainMenu = new MainMenuScreen(this);
             setScreen(mainMenu);
         }
+
+        if (screen.equalsIgnoreCase("gameScreen")) {
+            gameScreen = new GameScreen(this);
+            setScreen(gameScreen);
+        }
     }
 }
 
