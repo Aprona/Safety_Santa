@@ -5,6 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
+
+import java.util.Vector;
+
+import javafx.scene.Camera;
 
 /**
  * Created by Ville on 24.2.2016.
@@ -14,6 +19,7 @@ public class SafetySanta {
     private Texture santaImg;
     private Rectangle santaRectangle;
     private float santaSpeed = 2 / 100f;
+    private float delta = Gdx.graphics.getDeltaTime();
 
     public SafetySanta () {
         santaImg = new Texture("safety_santa_player.png");
@@ -21,20 +27,26 @@ public class SafetySanta {
     }
 
     public void santaUpdate () {
+        if (Gdx.input.isTouched()) {
+            float realX = Gdx.input.getX() / 100f;
+            float realY = Gdx.input.getY() / 100f;
+
+            Vector3 touchPos = new Vector3(realX, realY, 0);
+            if (touchPos.x  < 1) {
+
+            }
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) {
-            santaRectangle.x -= santaSpeed;
+            santaRectangle.x -= santaSpeed * delta;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)) {
-            santaRectangle.x += santaSpeed;
+            santaRectangle.x += santaSpeed * delta;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)) {
-            santaRectangle.y += santaSpeed;
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN)) {
-            santaRectangle.y -= santaSpeed;
+            santaRectangle.y += santaSpeed * delta;
         }
     }
 
