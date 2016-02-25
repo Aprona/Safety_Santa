@@ -74,7 +74,7 @@ public class SafetySanta {
 
     public void changeFloor() {
         if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
-            
+
         }
     }
 }
