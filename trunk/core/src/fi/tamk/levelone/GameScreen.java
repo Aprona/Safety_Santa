@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
@@ -15,9 +19,11 @@ import com.badlogic.gdx.math.Vector3;
 public class GameScreen implements Screen {
 
     private Main game;
-    public OrthographicCamera camera;
+    private OrthographicCamera camera;
     private SpriteBatch batch;
     private SafetySanta safetySanta;
+    private TiledMap tiledMap;
+    private TiledMapRenderer tiledMapRenderer;
 
     private float PADDING = 0.2f;
 
@@ -42,10 +48,12 @@ public class GameScreen implements Screen {
 
 
     public GameScreen(Main g) {
-        this.game = g;
-        this.batch = this.game.getBatch();
-        this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, 8f, 4.8F);
+        game = g;
+        batch = this.game.getBatch();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 8f, 4.8F);
+        tiledMap = (new TmxMapLoader()).load("background.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/100);
 
         safetySanta = new SafetySanta(this);
     }
@@ -57,8 +65,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        batch.setProjectionMatrix(camera.combined);
         clearScreen();
+        batch.setProjectionMatrix(camera.combined);
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render();
 
         if (Gdx.input.isTouched()) {
             float realX = Gdx.input.getX();
