@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.awt.Rectangle;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by Aprona on 24.2.2016.
@@ -23,19 +23,22 @@ public class GameScreen implements Screen {
 
     private Texture buttonActionImg = new Texture ("button_action.png");
     public Rectangle buttonActionRect = new Rectangle(
-            (int)(8 - buttonActionImg.getWidth() / 100f - PADDING),
-            (int)(0 + PADDING),
-            buttonActionImg.getWidth() / 100, buttonActionImg.getHeight() / 100);
+            (8f - buttonActionImg.getWidth() / 100f - PADDING),
+            (0f + PADDING),
+            buttonActionImg.getWidth() / 100f,
+            buttonActionImg.getHeight() / 100f);
     private Texture buttonLeftImg = new Texture ("button_left.png");
     public  Rectangle buttonLeftRect = new Rectangle(
-            (int)(0 + PADDING),
-            (int)(0 + PADDING),
-            buttonLeftImg.getWidth() / 100, buttonLeftImg.getHeight() / 100);
+            (0 + PADDING),
+            (0 + PADDING),
+            buttonLeftImg.getWidth() / 100f,
+            buttonLeftImg.getHeight() / 100f);
     private Texture buttonRightImg = new Texture ("button_right.png");
     public Rectangle buttonRightRect = new Rectangle(
-            1,
-            (int)(0 + PADDING),
-            buttonRightImg.getWidth() / 100, buttonRightImg.getHeight() / 100);
+            1f,
+            (0 + PADDING),
+            buttonRightImg.getWidth() / 100f,
+            buttonRightImg.getHeight() / 100f);
 
 
     public GameScreen(Main g) {
@@ -57,9 +60,18 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         clearScreen();
 
-        // Gdx.app.log("", "gameScreen");
+        if (Gdx.input.isTouched()) {
+            float realX = Gdx.input.getX();
+            float realY = Gdx.input.getY();
 
-        safetySanta.santaUpdate();
+            Vector3 touchPos = new Vector3(realX, realY, 0);
+            camera.unproject(touchPos);
+            safetySanta.santaUpdate(touchPos);
+
+            Gdx.app.log("touchPosX", String.valueOf(touchPos.x));
+            Gdx.app.log("touchPosY", String.valueOf(touchPos.y));
+        }
+        // Gdx.app.log("", "gameScreen");
 
         batch.begin();
         drawButtons();
@@ -115,7 +127,7 @@ public class GameScreen implements Screen {
     }
 
     public void clearScreen () {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(1, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 }

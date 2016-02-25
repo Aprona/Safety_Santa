@@ -28,34 +28,24 @@ public class SafetySanta {
         santaRectangle = new Rectangle(0,0,santaImg.getWidth() / 100f, santaImg.getHeight() / 100f);
     }
 
-    public void santaUpdate () {
-        if (Gdx.input.isTouched()) {
-            float realX = Gdx.input.getX() / 100f;
-            float realY = Gdx.input.getY() / 100f;
-
-            Vector3 touchPos = new Vector3(realX, realY, 0);
-            gameScreen.camera.unproject(touchPos);
-
-            Gdx.app.log("touchPosX", String.valueOf(realX));
-            Gdx.app.log("touchPosY", String.valueOf(realY));
-            Gdx.app.log("x", String.valueOf(gameScreen.buttonActionRect.getWidth()));
-            Gdx.app.log("y", String.valueOf(gameScreen.buttonActionRect.y));
+    public void santaUpdate (Vector3 touchPos) {
+            // Gdx.app.log("x", String.valueOf(gameScreen.buttonActionRect.getWidth()));
+            // Gdx.app.log("y", String.valueOf(gameScreen.buttonActionRect.y));
 
             if (touchPos.x  > gameScreen.buttonActionRect.x && touchPos.x < gameScreen.buttonActionRect.x + gameScreen.buttonActionRect.getWidth() &&
                     touchPos.y > gameScreen.buttonActionRect.y && touchPos.y < gameScreen.buttonActionRect.y + gameScreen.buttonActionRect.getHeight()) {
                     Gdx.app.log("action button", "");
             }
 
-            if (touchPos.x  > gameScreen.buttonLeftRect.x && touchPos.x < gameScreen.buttonLeftRect.getWidth() &&
-                    touchPos.y > gameScreen.buttonLeftRect.y && touchPos.y < gameScreen.buttonLeftRect.getHeight()) {
+            if (touchPos.x  > gameScreen.buttonLeftRect.x && touchPos.x < gameScreen.buttonLeftRect.x + gameScreen.buttonLeftRect.getWidth() &&
+                    touchPos.y > gameScreen.buttonLeftRect.y && touchPos.y < gameScreen.buttonLeftRect.y + gameScreen.buttonLeftRect.getHeight()) {
                 santaRectangle.x -= santaSpeed + delta;
             }
 
-            if (touchPos.x  > gameScreen.buttonRightRect.x && touchPos.x < gameScreen.buttonRightRect.getWidth() &&
-                    touchPos.y > gameScreen.buttonRightRect.y && touchPos.y < gameScreen.buttonRightRect.getHeight()) {
+            if (touchPos.x  > gameScreen.buttonRightRect.x && touchPos.x < gameScreen.buttonRightRect.x + gameScreen.buttonRightRect.getWidth() &&
+                    touchPos.y > gameScreen.buttonRightRect.y && touchPos.y < gameScreen.buttonRightRect.y + gameScreen.buttonRightRect.getHeight()) {
                 santaRectangle.x += santaSpeed + delta;
             }
-        }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) {
             santaRectangle.x -= santaSpeed + delta;

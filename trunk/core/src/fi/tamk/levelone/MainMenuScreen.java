@@ -42,7 +42,6 @@ public class MainMenuScreen implements Screen {
             game.changeScreen("gameScreen");
             dispose();
         }
-
     }
 
     @Override
