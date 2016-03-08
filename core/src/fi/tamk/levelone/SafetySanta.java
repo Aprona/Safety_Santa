@@ -55,6 +55,10 @@ public class SafetySanta{
 
     }
 
+    public Rectangle getSantaRectangle () {
+        return santaRectangle;
+    }
+
     public void moveSantaKeyboard() {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             santaRectangle.x -= santaSpeed * delta;
