@@ -54,6 +54,9 @@ public class GameScreen implements Screen {
             buttonRightImg.getWidth() / 100f,
             buttonRightImg.getHeight() / 100f);
 
+    Array<RectangleMapObject> rectangleUpObjects;
+    Array<RectangleMapObject> rectangleDownObjects;
+
 
     public GameScreen(Main g) {
         game = g;
@@ -67,9 +70,12 @@ public class GameScreen implements Screen {
         safetySanta.setX(0.64f);
         safetySanta.setY(0.96f);
 
-        MapLayer stairwayLayer = tiledMap.getLayers().get("stairway_objects");
-        MapObjects stairwayObjects = stairwayLayer.getObjects();
-
+        MapLayer stairwayUpLayer = tiledMap.getLayers().get("stairway_up");
+        MapObjects stairwayUpObjects = stairwayUpLayer.getObjects();
+        rectangleUpObjects = stairwayUpObjects.getByType(RectangleMapObject.class);
+        MapLayer stairwayDownLayer = tiledMap.getLayers().get("stairway_down");
+        MapObjects stairwayDownObjects = stairwayDownLayer.getObjects();
+        rectangleDownObjects = stairwayDownObjects.getByType(RectangleMapObject.class);
     }
 
     @Override
@@ -82,11 +88,49 @@ public class GameScreen implements Screen {
         clearScreen();
         batch.setProjectionMatrix(camera.combined);
         camera.update();
+
         tiledMapRenderer.setView(camera);
+
         tiledMapRenderer.render();
+
+        buttonUpdate();
+        safetySanta.moveSantaKeyboard();
+
+        checkInput();
+        checkSantaPosition();
 
         moveCamera();
 
+        batch.begin();
+        drawButtons();
+        safetySanta.santaDraw(batch);
+        batch.end();
+    }
+
+    public void checkSantaPosition () {
+        for (RectangleMapObject rectangleObject : rectangleUpObjects) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+
+            Gdx.app.log("rect_x", String.valueOf(rectangle.getX()));
+            Gdx.app.log("rect_width", String.valueOf(safetySanta.getX()));
+
+
+            if (rectangle.overlaps(safetySanta.getSantaRectangle())) {
+                Gdx.app.log("up", "");
+                safetySanta.setX(safetySanta.getY() + 2.24f);
+            }
+        }
+
+        for (RectangleMapObject rectangleObject : rectangleDownObjects) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+            if (safetySanta.getSantaRectangle().overlaps(rectangle)) {
+                Gdx.app.log("down", "");
+                safetySanta.setX(safetySanta.getY() - 2.24f);
+            }
+        }
+    }
+
+    public void checkInput () {
         if (Gdx.input.isTouched()) {
             float realX = Gdx.input.getX();
             float realY = Gdx.input.getY();
@@ -94,16 +138,7 @@ public class GameScreen implements Screen {
             Vector3 touchPos = new Vector3(realX, realY, 0);
             camera.unproject(touchPos);
             safetySanta.santaUpdate(touchPos);
-
-            // Gdx.app.log("touchPosX", String.valueOf(touchPos.x));
-            // Gdx.app.log("touchPosY", String.valueOf(touchPos.y));
         }
-        safetySanta.moveSantaKeyboard();
-
-        batch.begin();
-        safetySanta.santaDraw(batch);
-        drawButtons();
-        batch.end();
     }
 
     public void drawButtons () {
@@ -158,6 +193,15 @@ public class GameScreen implements Screen {
         if (camera.position.y < WINDOW_HEIGHT / 2) {
             camera.position.y = WINDOW_HEIGHT / 2;
         }
+    }
+
+    public void buttonUpdate () {
+        buttonLeftRect.x = camera.position.x - WINDOW_WIDTH / 2 + PADDING;
+        buttonLeftRect.y = camera.position.y - WINDOW_HEIGHT / 2 + PADDING;
+        buttonRightRect.x = camera.position.x - WINDOW_WIDTH / 2 + PADDING * 2 + buttonLeftImg.getWidth() / 100f;
+        buttonRightRect.y = camera.position.y - WINDOW_HEIGHT / 2 + PADDING;
+        buttonActionRect.x = camera.position.x + WINDOW_WIDTH / 2 - PADDING - buttonActionImg.getWidth() / 100f;
+        buttonActionRect.y = camera.position.y - WINDOW_HEIGHT / 2 + PADDING;
     }
 
     @Override
