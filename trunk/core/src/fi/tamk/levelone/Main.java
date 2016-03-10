@@ -1,23 +1,22 @@
 package fi.tamk.levelone;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.awt.Rectangle;
 
 public class Main extends Game {
 	SpriteBatch batch;
     MainMenuScreen mainMenu;
 	GameScreen gameScreen;
+	public OrthographicCamera camera;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, 8f, 4.8f );
 		changeScreen("mainMenu");
 
 	}
@@ -30,6 +29,7 @@ public class Main extends Game {
     public SpriteBatch getBatch() {
         return batch;
     }
+
 	public void clearScreen () {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -47,6 +47,10 @@ public class Main extends Game {
             setScreen(gameScreen);
         }
     }
+
+	public OrthographicCamera getCamera () {
+		return camera;
+	}
 }
 
 

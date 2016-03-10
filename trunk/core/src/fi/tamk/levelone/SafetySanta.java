@@ -3,14 +3,9 @@ package fi.tamk.levelone;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-
-import java.util.Vector;
-
-import javafx.scene.Camera;
 
 /**
  * Created by Ville on 24.2.2016.
@@ -52,7 +47,6 @@ public class SafetySanta{
 
     private void checkAction () {
         changeFloor();
-
     }
 
     public Rectangle getSantaRectangle () {

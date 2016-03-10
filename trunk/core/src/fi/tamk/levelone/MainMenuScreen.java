@@ -18,11 +18,9 @@ public class MainMenuScreen implements Screen {
 
     public MainMenuScreen(Main g) {
         this.game = g;
-        this.batch = this.game.getBatch();
-        this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, 8f, 4.8F);
-
-
+        this.batch = game.getBatch();
+        this.camera = game.getCamera();
+        // this.camera.setToOrtho(false, 8f, 4.8F);
     }
 
     @Override
@@ -32,8 +30,8 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        batch.setProjectionMatrix(camera.combined);
         clearScreen();
+        batch.setProjectionMatrix(this.camera.combined);
 
         batch.begin();
 
