@@ -40,31 +40,17 @@ public class GameScreen implements Screen {
 
     private float PADDING = 0.2f;
 
-    private Texture buttonActionImg = new Texture ("button_action.png");
-    public Rectangle buttonActionRect = new Rectangle(
-            (8f - buttonActionImg.getWidth() / 100f - PADDING),
-            (0f + PADDING),
-            buttonActionImg.getWidth() / 100f,
-            buttonActionImg.getHeight() / 100f);
-    private Texture buttonLeftImg = new Texture ("button_left.png");
-    public  Rectangle buttonLeftRect = new Rectangle(
-            (0 + PADDING),
-            (0 + PADDING),
-            buttonLeftImg.getWidth() / 100f,
-            buttonLeftImg.getHeight() / 100f);
-    private Texture buttonRightImg = new Texture ("button_right.png");
-    public Rectangle buttonRightRect = new Rectangle(
-            1f,
-            (0 + PADDING),
-            buttonRightImg.getWidth() / 100f,
-            buttonRightImg.getHeight() / 100f);
+    private Texture   buttonActionImg;
+    public  Rectangle buttonActionRect;
+    private Texture   buttonLeftImg;
+    public  Rectangle buttonLeftRect;
+    private Texture   buttonRightImg;
+    public  Rectangle buttonRightRect;
 
     private boolean canChangeFloor = true;
-    private Timer timer = new Timer();
-
-    Array<RectangleMapObject> rectangleUpObjects;
-    Array<RectangleMapObject> rectangleDownObjects;
-    Array<RectangleMapObject> enemySpawnPointObjects;
+    private boolean changeFloor = false;
+    private boolean floorUp;
+    LevelInitialize initialize = new LevelInitialize();
 
 
 
@@ -76,97 +62,63 @@ public class GameScreen implements Screen {
         // this.camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
         tiledMap = (new TmxMapLoader()).load("background.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/100f);
+        createButtons();
 
         safetySanta = new SafetySanta(this);
         safetySanta.setX(0.64f);
         safetySanta.setY(0.96f);
+        initialize.getObjects(tiledMap);
 
-        MapLayer stairwayUpLayer = tiledMap.getLayers().get("stairway_up");
-        MapObjects stairwayUpObjects = stairwayUpLayer.getObjects();
-        rectangleUpObjects = stairwayUpObjects.getByType(RectangleMapObject.class);
-        for (RectangleMapObject rectangleObject : rectangleUpObjects) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            rectangle.setX(rectangle.getX() / 100f);
-            rectangle.setY(rectangle.getY() / 100f);
-            rectangle.setWidth(rectangle.getWidth() / 100f);
-            rectangle.setHeight(rectangle.getHeight() / 100f);
-        }
 
-        MapLayer stairwayDownLayer = tiledMap.getLayers().get("stairway_down");
-        MapObjects stairwayDownObjects = stairwayDownLayer.getObjects();
-        rectangleDownObjects = stairwayDownObjects.getByType(RectangleMapObject.class);
-        for (RectangleMapObject rectangleObject : rectangleDownObjects) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            rectangle.setX(rectangle.getX() / 100f);
-            rectangle.setY(rectangle.getY() / 100f);
-            rectangle.setWidth(rectangle.getWidth() / 100f);
-            rectangle.setHeight(rectangle.getHeight() / 100f);
-        }
-
-        MapLayer enemySpawnPointsLayer = tiledMap.getLayers().get("enemy_spawnPoints");
-        MapObjects enemySpawnObjects = enemySpawnPointsLayer.getObjects();
-        enemySpawnPointObjects = enemySpawnObjects.getByType(RectangleMapObject.class);
-        for (RectangleMapObject rectangleObject : enemySpawnPointObjects) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            rectangle.setX(rectangle.getX() / 100f);
-            rectangle.setY(rectangle.getY() / 100f);
-            rectangle.setWidth(rectangle.getWidth() / 100f);
-            rectangle.setHeight(rectangle.getHeight() / 100f);
-        }
 
         createEnemies();
     }
+
 
     @Override
     public void show() {
 
     }
 
-    public void createEnemies () {
-
-        for (RectangleMapObject rectangleObject : enemySpawnPointObjects) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            // Gdx.app.log("rect_x", String.valueOf(rectangle.getX()));
-            // Gdx.app.log("rect_width", String.valueOf(safetySanta.getX()));
-
-            Enemy guard = new Enemy(this, rectangle.getX(), rectangle.getY());
-            enemies.add(guard);
-
-        }
-    }
-
     @Override
     public void render(float delta) {
         clearScreen();
         batch.setProjectionMatrix(camera.combined);
-        camera.update();
 
-        tiledMapRenderer.setView(camera);
-
-        tiledMapRenderer.render();
-
-        buttonUpdate();
-        safetySanta.moveSantaKeyboard();
-
-        checkInput();
         checkSantaPosition();
         for (Enemy guard : enemies) {
             guard.enemyUpdate();
         }
 
-        moveCamera();
-
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render();
+        buttonUpdate();
         batch.begin();
+
         for (Enemy guard : enemies) {
             guard.enemyDraw(batch);
         }
+
         drawButtons();
-        safetySanta.santaDraw(batch);
+        if (!changeFloor) {
+            safetySanta.santaDraw(batch);
+        } else {
+            if (floorUp) {
+                safetySanta.changeFloorUp(batch);
+            } else {
+                safetySanta.changeFloorDown(batch);
+            }
+        }
         batch.end();
+        checkInput();
+        safetySanta.moveSantaKeyboard();
+        moveCamera();
+        camera.update();
+
     }
 
     public void checkSantaPosition () {
-        for (RectangleMapObject rectangleObject : rectangleUpObjects) {
+        for (RectangleMapObject rectangleObject : initialize.getRectangleUpObjects()) {
             Rectangle rectangle = rectangleObject.getRectangle();
             Gdx.app.log("rect_x", String.valueOf(rectangle.getX()));
             Gdx.app.log("rect_width", String.valueOf(safetySanta.getX()));
@@ -175,21 +127,25 @@ public class GameScreen implements Screen {
                 if (rectangle.overlaps(safetySanta.getSantaRectangle()) &&
                         Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                     Gdx.app.log("up", "");
-                    safetySanta.setY(safetySanta.getY() + 2.56f);
+                    //safetySanta.setY(safetySanta.getY() + 2.56f);
                     canChangeFloor = false;
+                    changeFloor = true;
+                    floorUp = true;
                 }
             }
         }
 
-        for (RectangleMapObject rectangleObject : rectangleDownObjects) {
+        for (RectangleMapObject rectangleObject : initialize.getRectangleDownObjects()) {
             Rectangle rectangle = rectangleObject.getRectangle();
 
             if (canChangeFloor) {
                 if (safetySanta.getSantaRectangle().overlaps(rectangle) &&
                         Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                     Gdx.app.log("down", "");
-                    safetySanta.setY(safetySanta.getY() - 2.56f);
+                    //safetySanta.setY(safetySanta.getY() - 2.56f);
                     canChangeFloor = false;
+                    changeFloor = true;
+                    floorUp = false;
                 }
             }
         }
@@ -200,7 +156,7 @@ public class GameScreen implements Screen {
                 public void run() {
                     canChangeFloor = true;
                 }
-            }, 1);
+            }, 3);
         }
     }
 
@@ -310,5 +266,42 @@ public class GameScreen implements Screen {
     public void clearScreen () {
         Gdx.gl.glClearColor(1, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+
+    private void createButtons() {
+
+        buttonActionImg = new Texture ("button_action.png");
+        buttonActionRect = new Rectangle(
+                (8f - buttonActionImg.getWidth() / 100f - PADDING),
+                (0f + PADDING),
+                buttonActionImg.getWidth() / 100f,
+                buttonActionImg.getHeight() / 100f);
+
+        buttonLeftImg = new Texture ("button_left.png");
+        buttonLeftRect = new Rectangle(
+                (0 + PADDING),
+                (0 + PADDING),
+                buttonLeftImg.getWidth() / 100f,
+                buttonLeftImg.getHeight() / 100f);
+
+        buttonRightImg = new Texture ("button_right.png");
+        buttonRightRect = new Rectangle(
+                1f,
+                (0 + PADDING),
+                buttonRightImg.getWidth() / 100f,
+                buttonRightImg.getHeight() / 100f);
+    }
+
+    public void createEnemies () {
+
+        for (RectangleMapObject rectangleObject : initialize.getEnemySpawnPointObjects()) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+            // Gdx.app.log("rect_x", String.valueOf(rectangle.getX()));
+            // Gdx.app.log("rect_width", String.valueOf(safetySanta.getX()));
+
+            Enemy guard = new Enemy(this, rectangle.getX(), rectangle.getY());
+            enemies.add(guard);
+
+        }
     }
 }
