@@ -17,6 +17,9 @@ public class SafetySanta{
     private float santaSpeed = 2f;
     private float delta = Gdx.graphics.getDeltaTime();
     private GameScreen gameScreen;
+    private boolean goRight = true;
+    private float alpha = 1f;
+    private float movement = 0f;
 
     public SafetySanta (GameScreen gameScreen) {
         this.gameScreen = gameScreen;
@@ -30,23 +33,23 @@ public class SafetySanta{
 
             if (touchPos.x  > gameScreen.buttonActionRect.x && touchPos.x < gameScreen.buttonActionRect.x + gameScreen.buttonActionRect.getWidth() &&
                     touchPos.y > gameScreen.buttonActionRect.y && touchPos.y < gameScreen.buttonActionRect.y + gameScreen.buttonActionRect.getHeight()) {
-                    checkAction();
+
             }
 
             if (touchPos.x  > gameScreen.buttonLeftRect.x && touchPos.x < gameScreen.buttonLeftRect.x + gameScreen.buttonLeftRect.getWidth() &&
                     touchPos.y > gameScreen.buttonLeftRect.y && touchPos.y < gameScreen.buttonLeftRect.y + gameScreen.buttonLeftRect.getHeight()) {
                 santaRectangle.x -= santaSpeed * delta;
+                goRight = false;
             }
 
             if (touchPos.x  > gameScreen.buttonRightRect.x && touchPos.x < gameScreen.buttonRightRect.x + gameScreen.buttonRightRect.getWidth() &&
                     touchPos.y > gameScreen.buttonRightRect.y && touchPos.y < gameScreen.buttonRightRect.y + gameScreen.buttonRightRect.getHeight()) {
                 santaRectangle.x += santaSpeed * delta;
+                goRight = true;
             }
 
-    }
 
-    private void checkAction () {
-        changeFloor();
+
     }
 
     public Rectangle getSantaRectangle () {
@@ -56,10 +59,12 @@ public class SafetySanta{
     public void moveSantaKeyboard() {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             santaRectangle.x -= santaSpeed * delta;
+            goRight = false;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             santaRectangle.x += santaSpeed * delta;
+            goRight = true;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
@@ -92,11 +97,13 @@ public class SafetySanta{
                 santaRectangle.x,
                 santaRectangle.y,
                 santaImg.getWidth() / 100f,
-                santaImg.getHeight() / 100f);
-    }
-
-    public void changeFloor() {
-
+                santaImg.getHeight() / 100f,
+                0,
+                0,
+                santaImg.getWidth(),
+                santaImg.getHeight(),
+                !goRight,
+                false);
     }
 
     public float getRectangleWidth() {
@@ -105,5 +112,56 @@ public class SafetySanta{
 
     public float getRectangleHeight() {
         return santaRectangle.getHeight();
+    }
+
+    public void changeFloorUp(SpriteBatch batch) {
+        boolean fading = true;
+
+        batch.setColor(1f, 1f, 1f, alpha);
+        batch.draw(santaImg,
+                santaRectangle.x,
+                santaRectangle.y,
+                santaImg.getWidth() / 100f,
+                santaImg.getHeight() / 100f,
+                0,
+                0,
+                santaImg.getWidth(),
+                santaImg.getHeight(),
+                !goRight,
+                false);
+
+
+        if (alpha >= 0 && fading) {
+            alpha -= 0.05f;
+        }
+
+        if (alpha < 0.2 && fading && movement < 2.56f) {
+            Gdx.app.log("jotain", "on testattu");
+            santaRectangle.y += 0.05f;
+            movement += 0.05f;
+        }
+
+        if (alpha <= 1 && !fading) {
+            alpha -= 0.05f;
+        }
+    }
+
+    public void changeFloorDown(SpriteBatch batch) {
+        batch.setColor(1f, 1f, 1f, alpha);
+        batch.draw(santaImg,
+                santaRectangle.x,
+                santaRectangle.y,
+                santaImg.getWidth() / 100f,
+                santaImg.getHeight() / 100f,
+                0,
+                0,
+                santaImg.getWidth(),
+                santaImg.getHeight(),
+                !goRight,
+                false);
+
+        if (alpha > 0) {
+            alpha -= 0.1f;
+        }
     }
 }

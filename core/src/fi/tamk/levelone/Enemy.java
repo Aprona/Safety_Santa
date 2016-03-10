@@ -48,9 +48,9 @@ public class Enemy {
                 enemyImg.getWidth(),
                 enemyImg.getHeight(),
                 !goRight,
-                false
-                );
-
+                false);
 
     }
+
+
 }
