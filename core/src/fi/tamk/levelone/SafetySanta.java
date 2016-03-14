@@ -19,10 +19,12 @@ public class SafetySanta{
     private GameScreen gameScreen;
     private boolean goRight = true;
     private float alpha = 1f;
-    private float movement = 0f;
+    private float movement = 0;
+    private boolean fading;
 
     public SafetySanta (GameScreen gameScreen) {
         this.gameScreen = gameScreen;
+        fading = true;
         santaImg = new Texture("safety_santa_player.png");
         santaRectangle = new Rectangle(0,0,santaImg.getWidth() / 100f, santaImg.getHeight() / 100f);
     }
@@ -57,6 +59,7 @@ public class SafetySanta{
     }
 
     public void moveSantaKeyboard() {
+
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             santaRectangle.x -= santaSpeed * delta;
             goRight = false;
@@ -114,8 +117,7 @@ public class SafetySanta{
         return santaRectangle.getHeight();
     }
 
-    public void changeFloorUp(SpriteBatch batch) {
-        boolean fading = true;
+    public void changeFloorUp(SpriteBatch batch, GameScreen game) {
 
         batch.setColor(1f, 1f, 1f, alpha);
         batch.draw(santaImg,
@@ -135,18 +137,35 @@ public class SafetySanta{
             alpha -= 0.05f;
         }
 
-        if (alpha < 0.2 && fading && movement < 2.56f) {
-            Gdx.app.log("jotain", "on testattu");
-            santaRectangle.y += 0.05f;
-            movement += 0.05f;
+        if (alpha < 1f && !fading) {
+            Gdx.app.log("jotain", "fade in");
+            alpha += 0.05f;
         }
 
-        if (alpha <= 1 && !fading) {
-            alpha -= 0.05f;
+        if (alpha < 0.05f && fading && movement <= 2.56f && game.floorChangeInProgress) {
+            Gdx.app.log("jotain", "on testattu");
+            santaRectangle.y += 0.04f;
+            movement += 0.04f;
         }
+
+        if (alpha <= 0 && movement >= 2.55f) {
+            Gdx.app.log("", String.valueOf(movement));
+            fading = false;
+        }
+
+        if (!fading && alpha > 0.95f) {
+            Gdx.app.log("", "näkyvissä");
+            fading = true;
+            alpha = 1;
+            movement = 0;
+            game.floorChangeInProgress = false;
+
+        }
+
+
     }
 
-    public void changeFloorDown(SpriteBatch batch) {
+    public void changeFloorDown(SpriteBatch batch, GameScreen game) {
         batch.setColor(1f, 1f, 1f, alpha);
         batch.draw(santaImg,
                 santaRectangle.x,
@@ -160,8 +179,33 @@ public class SafetySanta{
                 !goRight,
                 false);
 
-        if (alpha > 0) {
-            alpha -= 0.1f;
+        if (alpha >= 0 && fading) {
+            alpha -= 0.05f;
+        }
+
+        if (alpha < 0.05f && fading && movement < 2.56f) {
+            Gdx.app.log("jotain", "on testattu");
+            santaRectangle.y -= 0.04f;
+            movement += 0.04f;
+        }
+
+        if (alpha < 1f && !fading) {
+            Gdx.app.log("jotain", "fade in");
+            alpha += 0.05f;
+        }
+
+        if (alpha <= 0 && movement >= 2.55f) {
+            Gdx.app.log("", "alpha = 0");
+            fading = false;
+        }
+
+        if (!fading && alpha > 0.95f) {
+            Gdx.app.log("", "näkyvissä");
+            fading = true;
+            alpha = 1;
+            movement = 0;
+            game.floorChangeInProgress = false;
+
         }
     }
 }
