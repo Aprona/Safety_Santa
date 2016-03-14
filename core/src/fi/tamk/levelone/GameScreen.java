@@ -27,8 +27,8 @@ import java.util.ArrayList;
 public class GameScreen implements Screen {
     private float WINDOW_WIDTH = 8f;
     private float WINDOW_HEIGHT = 4.8f;
-    private float WORLD_WIDTH_METERS = 4096f / 100;
-    private float WORLD_HEIGHT_METERS = 2048 / 100;
+    private float WORLD_WIDTH_METERS = 1600f / 100;
+    private float WORLD_HEIGHT_METERS = 928f / 100;
 
     private Main game;
     private OrthographicCamera camera;
@@ -57,17 +57,17 @@ public class GameScreen implements Screen {
         this.batch = game.getBatch();
         this.camera = game.getCamera(); //new OrthographicCamera();
         // this.camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
-        tiledMap = (new TmxMapLoader()).load("background.tmx");
+        tiledMap = (new TmxMapLoader()).load("level_1.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1/100f);
         createButtons();
 
-        safetySanta = new SafetySanta(this);
-        safetySanta.setX(0.64f);
-        safetySanta.setY(0.96f);
+        // safetySanta = new SafetySanta(this);
+        // safetySanta.setX(0.64f);
+        // safetySanta.setY(0.96f);
         initialize.getObjects(tiledMap);
 
 
-
+        createSanta();
         createEnemies();
     }
 
@@ -103,11 +103,12 @@ public class GameScreen implements Screen {
         }
 
         batch.setColor(1f, 1f, 1f, 1f);
-        drawButtons();
 
         for (Enemy guard : enemies) {
             guard.enemyDraw(batch);
         }
+
+        drawButtons();
 
         batch.end();
         checkInput();
@@ -129,8 +130,6 @@ public class GameScreen implements Screen {
             if (canChangeFloor) {
                 if (rectangle.overlaps(safetySanta.getSantaRectangle()) &&
                         Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-                    Gdx.app.log("up", "");
-                    //safetySanta.setY(safetySanta.getY() + 2.56f);
                     canChangeFloor = false;
                     floorChangeInProgress = true;
                     floorUp = true;
@@ -267,7 +266,7 @@ public class GameScreen implements Screen {
     }
 
     public void clearScreen () {
-        Gdx.gl.glClearColor(1, 0, 1, 1);
+        Gdx.gl.glClearColor(255f, 255f, 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
@@ -304,7 +303,15 @@ public class GameScreen implements Screen {
 
             Enemy guard = new Enemy(this, rectangle.getX(), rectangle.getY());
             enemies.add(guard);
+        }
+    }
 
+    public void createSanta ()  {
+        for (RectangleMapObject rectangleObject : initialize.getSantaSpawnPointObject()) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+            safetySanta = new SafetySanta(this);
+            safetySanta.setX(rectangle.getX());
+            safetySanta.setY(rectangle.getY());
         }
     }
 }

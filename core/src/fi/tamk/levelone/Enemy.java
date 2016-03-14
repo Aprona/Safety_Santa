@@ -3,6 +3,7 @@ package fi.tamk.levelone;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -11,7 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Enemy {
     private Texture enemyImg;
     private Rectangle enemyRectangle;
-    private float enemySpeed = 2f;
+    private float enemySpeed = 1f;
     private float delta = Gdx.graphics.getDeltaTime();
     private boolean goRight = true;
     private GameScreen gameScreen;
@@ -23,6 +24,20 @@ public class Enemy {
     }
 
     public void enemyUpdate () {
+
+        for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+
+            if (enemyRectangle.overlaps(rectangle) && goRight) {
+                goRight = false;
+                enemyRectangle.x -= enemySpeed * delta;
+            } else if (enemyRectangle.overlaps(rectangle) && !goRight) {
+                goRight = true;
+                enemyRectangle.x += enemySpeed * delta;
+            }
+
+        }
+
         if (goRight) {
             enemyRectangle.x += enemySpeed * delta;
         } else {
