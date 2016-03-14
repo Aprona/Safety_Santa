@@ -48,12 +48,9 @@ public class GameScreen implements Screen {
     public  Rectangle buttonRightRect;
 
     private boolean canChangeFloor = true;
-    private boolean changeFloor = false;
+    public boolean floorChangeInProgress = false;
     private boolean floorUp;
     LevelInitialize initialize = new LevelInitialize();
-
-
-
 
     public GameScreen(Main g) {
         this.game = g;
@@ -95,23 +92,29 @@ public class GameScreen implements Screen {
         buttonUpdate();
         batch.begin();
 
+        if (!floorChangeInProgress) {
+            safetySanta.santaDraw(batch);
+        } else {
+            if (floorUp) {
+                safetySanta.changeFloorUp(batch, this);
+            } else {
+                safetySanta.changeFloorDown(batch, this);
+            }
+        }
+
+        batch.setColor(1f, 1f, 1f, 1f);
+        drawButtons();
+
         for (Enemy guard : enemies) {
             guard.enemyDraw(batch);
         }
 
-        drawButtons();
-        if (!changeFloor) {
-            safetySanta.santaDraw(batch);
-        } else {
-            if (floorUp) {
-                safetySanta.changeFloorUp(batch);
-            } else {
-                safetySanta.changeFloorDown(batch);
-            }
-        }
         batch.end();
         checkInput();
-        safetySanta.moveSantaKeyboard();
+        if (!floorChangeInProgress) {
+            safetySanta.moveSantaKeyboard();
+        }
+
         moveCamera();
         camera.update();
 
@@ -120,8 +123,8 @@ public class GameScreen implements Screen {
     public void checkSantaPosition () {
         for (RectangleMapObject rectangleObject : initialize.getRectangleUpObjects()) {
             Rectangle rectangle = rectangleObject.getRectangle();
-            Gdx.app.log("rect_x", String.valueOf(rectangle.getX()));
-            Gdx.app.log("rect_width", String.valueOf(safetySanta.getX()));
+            // Gdx.app.log("rect_x", String.valueOf(rectangle.getX()));
+            // Gdx.app.log("rect_width", String.valueOf(safetySanta.getX()));
 
             if (canChangeFloor) {
                 if (rectangle.overlaps(safetySanta.getSantaRectangle()) &&
@@ -129,7 +132,7 @@ public class GameScreen implements Screen {
                     Gdx.app.log("up", "");
                     //safetySanta.setY(safetySanta.getY() + 2.56f);
                     canChangeFloor = false;
-                    changeFloor = true;
+                    floorChangeInProgress = true;
                     floorUp = true;
                 }
             }
@@ -144,7 +147,7 @@ public class GameScreen implements Screen {
                     Gdx.app.log("down", "");
                     //safetySanta.setY(safetySanta.getY() - 2.56f);
                     canChangeFloor = false;
-                    changeFloor = true;
+                    floorChangeInProgress = true;
                     floorUp = false;
                 }
             }
