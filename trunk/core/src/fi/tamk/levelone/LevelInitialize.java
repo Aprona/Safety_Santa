@@ -14,6 +14,8 @@ public class LevelInitialize {
     Array<RectangleMapObject> rectangleUpObjects;
     Array<RectangleMapObject> rectangleDownObjects;
     Array<RectangleMapObject> enemySpawnPointObjects;
+    Array<RectangleMapObject> santaSpawnPointObject;
+    Array<RectangleMapObject> wallObjects;
     TiledMap tiledMap;
 
     public LevelInitialize() {
@@ -55,6 +57,28 @@ public class LevelInitialize {
             rectangle.setWidth(rectangle.getWidth() / 100f);
             rectangle.setHeight(rectangle.getHeight() / 100f);
         }
+
+        MapLayer santaSpawnPointLayer = tiledMap.getLayers().get("santa_spawnPoint");
+        MapObjects santaSpawnObject = santaSpawnPointLayer.getObjects();
+        santaSpawnPointObject = santaSpawnObject.getByType(RectangleMapObject.class);
+        for (RectangleMapObject rectangleObject : santaSpawnPointObject) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+            rectangle.setX(rectangle.getX() / 100f);
+            rectangle.setY(rectangle.getY() / 100f);
+            rectangle.setWidth(rectangle.getWidth() / 100f);
+            rectangle.setHeight(rectangle.getHeight() / 100f);
+        }
+
+        MapLayer wallObjectsLayer = tiledMap.getLayers().get("wall_objects");
+        MapObjects wallLayerObjects = wallObjectsLayer.getObjects();
+        wallObjects = wallLayerObjects.getByType(RectangleMapObject.class);
+        for (RectangleMapObject rectangleObject : wallObjects) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+            rectangle.setX(rectangle.getX() / 100f);
+            rectangle.setY(rectangle.getY() / 100f);
+            rectangle.setWidth(rectangle.getWidth() / 100f);
+            rectangle.setHeight(rectangle.getHeight() / 100f);
+        }
     }
 
     public Array<RectangleMapObject> getRectangleUpObjects() {
@@ -67,5 +91,13 @@ public class LevelInitialize {
 
     public Array<RectangleMapObject> getEnemySpawnPointObjects() {
         return enemySpawnPointObjects;
+    }
+
+    public Array<RectangleMapObject> getSantaSpawnPointObject () {
+        return santaSpawnPointObject;
+    }
+
+    public Array<RectangleMapObject> getRectangleWallObjects () {
+        return wallObjects;
     }
 }

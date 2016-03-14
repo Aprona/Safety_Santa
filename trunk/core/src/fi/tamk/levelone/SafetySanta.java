@@ -27,6 +27,7 @@ public class SafetySanta{
         fading = true;
         santaImg = new Texture("safety_santa_player.png");
         santaRectangle = new Rectangle(0,0,santaImg.getWidth() / 100f, santaImg.getHeight() / 100f);
+
     }
 
     public void santaUpdate (Vector3 touchPos) {
@@ -142,13 +143,13 @@ public class SafetySanta{
             alpha += 0.05f;
         }
 
-        if (alpha < 0.05f && fading && movement <= 2.56f && game.floorChangeInProgress) {
+        if (alpha < 0.05f && fading && movement <= 2.23f && game.floorChangeInProgress) {
             Gdx.app.log("jotain", "on testattu");
             santaRectangle.y += 0.04f;
             movement += 0.04f;
         }
 
-        if (alpha <= 0 && movement >= 2.55f) {
+        if (alpha <= 0 && movement >= 2.23f) {
             Gdx.app.log("", String.valueOf(movement));
             fading = false;
         }
@@ -183,18 +184,18 @@ public class SafetySanta{
             alpha -= 0.05f;
         }
 
-        if (alpha < 0.05f && fading && movement < 2.56f) {
-            Gdx.app.log("jotain", "on testattu");
-            santaRectangle.y -= 0.04f;
-            movement += 0.04f;
-        }
-
         if (alpha < 1f && !fading) {
             Gdx.app.log("jotain", "fade in");
             alpha += 0.05f;
         }
 
-        if (alpha <= 0 && movement >= 2.55f) {
+        if (alpha < 0.05f && fading && movement <= 2.23f && game.floorChangeInProgress) {
+            Gdx.app.log("jotain", "on testattu");
+            santaRectangle.y -= 0.04f;
+            movement += 0.04f;
+        }
+
+        if (alpha <= 0 && movement >= 2.23f) {
             Gdx.app.log("", "alpha = 0");
             fading = false;
         }

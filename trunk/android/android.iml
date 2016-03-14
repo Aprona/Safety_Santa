@@ -73,8 +73,8 @@
     <orderEntry type="library" exported="" name="box2dlights-1.4" level="project" />
     <orderEntry type="library" exported="" name="gdx-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="gdx-freetype-1.8.0" level="project" />
-    <orderEntry type="library" exported="" name="gdx-backend-android-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="gdx-box2d-1.8.0" level="project" />
+    <orderEntry type="library" exported="" name="gdx-backend-android-1.8.0" level="project" />
     <orderEntry type="module" module-name="core" exported="" />
     <orderEntry type="library" exported="" name="android-android-20" level="project" />
   </component>
