@@ -82,7 +82,6 @@ public class GameScreen implements Screen {
         clearScreen();
         batch.setProjectionMatrix(camera.combined);
 
-        checkSantaPosition();
         for (Enemy guard : enemies) {
             guard.enemyUpdate();
         }
@@ -90,17 +89,10 @@ public class GameScreen implements Screen {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         buttonUpdate();
-        batch.begin();
 
-        if (!floorChangeInProgress) {
-            safetySanta.santaDraw(batch);
-        } else {
-            if (floorUp) {
-                safetySanta.changeFloorUp(batch, this);
-            } else {
-                safetySanta.changeFloorDown(batch, this);
-            }
-        }
+        batch.begin();
+        safetySanta.checkActions();
+        checkInput();
 
         batch.setColor(1f, 1f, 1f, 1f);
 
@@ -111,55 +103,13 @@ public class GameScreen implements Screen {
         drawButtons();
 
         batch.end();
-        checkInput();
+
         if (!floorChangeInProgress) {
             safetySanta.moveSantaKeyboard();
         }
 
         moveCamera();
         camera.update();
-
-    }
-
-    public void checkSantaPosition () {
-        for (RectangleMapObject rectangleObject : initialize.getRectangleUpObjects()) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            // Gdx.app.log("rect_x", String.valueOf(rectangle.getX()));
-            // Gdx.app.log("rect_width", String.valueOf(safetySanta.getX()));
-
-            if (canChangeFloor) {
-                if (rectangle.overlaps(safetySanta.getSantaRectangle()) &&
-                        Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-                    canChangeFloor = false;
-                    floorChangeInProgress = true;
-                    floorUp = true;
-                }
-            }
-        }
-
-        for (RectangleMapObject rectangleObject : initialize.getRectangleDownObjects()) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-
-            if (canChangeFloor) {
-                if (safetySanta.getSantaRectangle().overlaps(rectangle) &&
-                        Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-                    Gdx.app.log("down", "");
-                    //safetySanta.setY(safetySanta.getY() - 2.56f);
-                    canChangeFloor = false;
-                    floorChangeInProgress = true;
-                    floorUp = false;
-                }
-            }
-        }
-
-        if (!canChangeFloor) {
-            Timer.schedule(new Timer.Task(){
-                @Override
-                public void run() {
-                    canChangeFloor = true;
-                }
-            }, 3);
-        }
     }
 
     public void checkInput () {
@@ -192,18 +142,6 @@ public class GameScreen implements Screen {
                 buttonRightRect.y,
                 buttonRightImg.getWidth() / 100f,
                 buttonRightImg.getHeight() / 100f);
-    }
-
-    private void checkCollisions () {
-        MapLayer collisionObjectLayer = (MapLayer)tiledMap.getLayers().get("wall_objects");
-        MapObjects mapObjects = collisionObjectLayer.getObjects();
-        Array<RectangleMapObject> rectangleObjects = mapObjects.getByType(RectangleMapObject.class);
-        for (RectangleMapObject rectangleObject : rectangleObjects) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            /*if () {
-
-            }*/
-        }
     }
 
     private void moveCamera () {
@@ -309,7 +247,7 @@ public class GameScreen implements Screen {
     public void createSanta ()  {
         for (RectangleMapObject rectangleObject : initialize.getSantaSpawnPointObject()) {
             Rectangle rectangle = rectangleObject.getRectangle();
-            safetySanta = new SafetySanta(this);
+            safetySanta = new SafetySanta(this, batch);
             safetySanta.setX(rectangle.getX());
             safetySanta.setY(rectangle.getY());
         }
