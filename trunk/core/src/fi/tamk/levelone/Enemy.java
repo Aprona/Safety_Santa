@@ -23,7 +23,7 @@ public class Enemy {
         enemyRectangle = new Rectangle(x, y, enemyImg.getWidth() / 100f, enemyImg.getHeight() / 100f);
     }
 
-    public void enemyUpdate () {
+    public void update() {
 
         for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
             Rectangle rectangle = rectangleObject.getRectangle();
@@ -52,7 +52,7 @@ public class Enemy {
         }
     }
 
-    public void enemyDraw (SpriteBatch sp)  {
+    public void draw(SpriteBatch sp)  {
         sp.draw(enemyImg,
                 enemyRectangle.x,
                 enemyRectangle.y,
@@ -66,6 +66,4 @@ public class Enemy {
                 false);
 
     }
-
-
 }
