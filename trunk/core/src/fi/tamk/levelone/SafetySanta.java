@@ -278,6 +278,7 @@ public class SafetySanta{
     }
 
     public void changeFloorDown(SpriteBatch batch) {
+
         batch.setColor(1f, 1f, 1f, alpha);
         batch.draw(santaImg,
                 santaRectangle.x,
@@ -317,7 +318,6 @@ public class SafetySanta{
             alpha = 1;
             movement = 0;
             floorChangeInProgress = false;
-
         }
     }
 }

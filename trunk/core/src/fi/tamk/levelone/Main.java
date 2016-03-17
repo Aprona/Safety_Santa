@@ -10,6 +10,7 @@ public class Main extends Game {
 	SpriteBatch batch;
     MainMenuScreen mainMenu;
 	GameScreen gameScreen;
+    LevelSelectionScreen levelSelectionScreen;
 	public OrthographicCamera camera;
 
 	@Override
@@ -43,7 +44,18 @@ public class Main extends Game {
         }
 
         if (screen.equalsIgnoreCase("gameScreen")) {
+            if (!(gameScreen == null)) {
+                gameScreen.dispose();
+                gameScreen = null;
+            }
+
             gameScreen = new GameScreen(this);
+            setScreen(gameScreen);
+
+        }
+
+        if (screen.equalsIgnoreCase("levelSelectionScreen")) {
+            levelSelectionScreen = new LevelSelectionScreen(this);
             setScreen(gameScreen);
         }
     }
