@@ -28,6 +28,8 @@ public class SafetySanta{
     public boolean floorChangeInProgress = false;
     private boolean floorUp;
     private SpriteBatch batch;
+    private boolean actionButtonPressed;
+    private Vector3 touchPos;
 
     public SafetySanta (GameScreen gameScreen, SpriteBatch b) {
         this.gameScreen = gameScreen;
@@ -35,71 +37,79 @@ public class SafetySanta{
         this.batch = b;
         santaImg = new Texture("safety_santa_player.png");
         santaRectangle = new Rectangle(0,0,santaImg.getWidth() / 100f, santaImg.getHeight() / 100f);
+        touchPos = new Vector3(0, 0, 0);
     }
 
-    public void update(Vector3 touchPos) {
+    public void update() {
         canMove = true;
-            if (touchPos.x  > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() &&
-                    touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
-                    checkActions();
-            }
+        actionButtonPressed = false;
 
-            if (touchPos.x  > gameScreen.hud.getButtonLeftRect().x && touchPos.x < gameScreen.hud.getButtonLeftRect().x + gameScreen.hud.getButtonLeftRect().getWidth() &&
-                    touchPos.y > gameScreen.hud.getButtonLeftRect().y && touchPos.y < gameScreen.hud.getButtonLeftRect().y + gameScreen.hud.getButtonLeftRect().getHeight()) {
-
-                for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
-                    Rectangle rectangle = rectangleObject.getRectangle();
-                    if (rectangle.contains(santaRectangle.x - 0.05f,
-                            (santaRectangle.y + santaRectangle.height / 2))) {
-                        canMove = false;
-                    }
-                }
-
-                if (canMove) {
-                    santaRectangle.x -= santaSpeed * delta;
-                    goRight = false;
-                }
-            }
-
-            if (touchPos.x  > gameScreen.hud.getButtonRightRect().x && touchPos.x < gameScreen.hud.getButtonRightRect().x + gameScreen.hud.getButtonRightRect().getWidth() &&
-                    touchPos.y > gameScreen.hud.getButtonRightRect().y && touchPos.y < gameScreen.hud.getButtonRightRect().y + gameScreen.hud.getButtonRightRect().getHeight()) {
-
-                for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
-                    Rectangle rectangle = rectangleObject.getRectangle();
-                    if (rectangle.contains(santaRectangle.x + santaRectangle.width + 0.05f,
-                            santaRectangle.y + (santaRectangle.height / 2))) {
-                        canMove = false;
-                    }
-                }
-
-                if (canMove) {
-                    santaRectangle.x += santaSpeed * delta;
-                    goRight = true;
-                }
-            }
-    }
-
-    public void checkInput() {
         if (Gdx.input.isTouched()) {
             float realX = Gdx.input.getX();
             float realY = Gdx.input.getY();
 
-            Vector3 touchPos = new Vector3(realX, realY, 0);
+            touchPos.x = realX;
+            touchPos.y = realY;
             gameScreen.game.getCamera().unproject(touchPos);
-            update(touchPos);
+
         }
+
+        if (touchPos.x  > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() &&
+                touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
+            Gdx.app.log("nappulat", "toimii");
+            actionButtonPressed = true;
+        }
+
+        if (touchPos.x  > gameScreen.hud.getButtonLeftRect().x && touchPos.x < gameScreen.hud.getButtonLeftRect().x + gameScreen.hud.getButtonLeftRect().getWidth() &&
+                touchPos.y > gameScreen.hud.getButtonLeftRect().y && touchPos.y < gameScreen.hud.getButtonLeftRect().y + gameScreen.hud.getButtonLeftRect().getHeight()) {
+
+            for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
+                Rectangle rectangle = rectangleObject.getRectangle();
+                if (rectangle.contains(santaRectangle.x - 0.05f,
+                        (santaRectangle.y + santaRectangle.height / 2))) {
+                    canMove = false;
+                }
+            }
+
+            if (canMove) {
+                santaRectangle.x -= santaSpeed * delta;
+                goRight = false;
+            }
+        }
+
+        if (touchPos.x  > gameScreen.hud.getButtonRightRect().x && touchPos.x < gameScreen.hud.getButtonRightRect().x + gameScreen.hud.getButtonRightRect().getWidth() &&
+                touchPos.y > gameScreen.hud.getButtonRightRect().y && touchPos.y < gameScreen.hud.getButtonRightRect().y + gameScreen.hud.getButtonRightRect().getHeight()) {
+
+            for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
+                Rectangle rectangle = rectangleObject.getRectangle();
+                if (rectangle.contains(santaRectangle.x + santaRectangle.width + 0.05f,
+                        santaRectangle.y + (santaRectangle.height / 2))) {
+                    canMove = false;
+                }
+            }
+
+            if (canMove) {
+                santaRectangle.x += santaSpeed * delta;
+                goRight = true;
+            }
+        }
+    }
+
+    public void checkInput() {
+
     }
 
     public void checkActions() {
         checkFloorChange();
-        if (!floorChangeInProgress) {
-            draw(batch);
-        } else {
+
+        if (floorChangeInProgress) {
             if (floorUp) {
                 changeFloorUp(batch);
             } else {
                 changeFloorDown(batch);
             }
+        } else {
+            draw(batch);
         }
     }
 
@@ -109,7 +119,7 @@ public class SafetySanta{
 
             if (canChangeFloor) {
                 if (rectangle.overlaps(getSantaRectangle()) &&
-                        Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+                        Gdx.input.isKeyJustPressed(Input.Keys.H) || actionButtonPressed) {
                     canChangeFloor = false;
                     floorChangeInProgress = true;
                     floorUp = true;
@@ -180,6 +190,7 @@ public class SafetySanta{
     }
 
     public void draw(SpriteBatch sp)  {
+        // batch.setColor(1f, 1f, 1f, alpha);
         sp.draw(santaImg,
                 santaRectangle.x,
                 santaRectangle.y,
