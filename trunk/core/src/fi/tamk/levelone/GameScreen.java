@@ -57,10 +57,10 @@ public class GameScreen implements Screen {
         }
 
         hud.update();
+        safetySanta.update();
 
         batch.begin();
         safetySanta.checkActions();
-        safetySanta.checkInput();
 
         resetColors();
 
