@@ -72,9 +72,9 @@ public class GameScreen implements Screen {
 
         batch.end();
 
-        if (!floorChangeInProgress) {
-            safetySanta.moveSantaKeyboard();
-        }
+        //if (!floorChangeInProgress) {
+        //    safetySanta.moveSantaKeyboard();
+        //}
 
         moveCamera();
     }
