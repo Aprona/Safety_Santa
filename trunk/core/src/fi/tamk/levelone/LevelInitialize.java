@@ -18,6 +18,8 @@ public class LevelInitialize {
     Array<RectangleMapObject> enemySpawnPointObjects;
     Array<RectangleMapObject> santaSpawnPointObject;
     Array<RectangleMapObject> wallObjects;
+    Array<RectangleMapObject> hidingObjects;
+    Array<RectangleMapObject> collectibleObjects;
     TiledMap tiledMap;
 
     public LevelInitialize(GameScreen gameScreen) {
@@ -71,6 +73,16 @@ public class LevelInitialize {
         MapObjects wallLayerObjects = wallObjectsLayer.getObjects();
         wallObjects = wallLayerObjects.getByType(RectangleMapObject.class);
         scaleObjects(wallObjects);
+
+        MapLayer hidingObjectsLayer = tiledMap.getLayers().get("hiding_objects");
+        MapObjects hidingLayerObjects = hidingObjectsLayer.getObjects();
+        hidingObjects = hidingLayerObjects.getByType(RectangleMapObject.class);
+        scaleObjects(hidingObjects);
+
+        MapLayer collectableObjectsLayer = tiledMap.getLayers().get("collectable_objects");
+        MapObjects collectableLayerObjects = collectableObjectsLayer.getObjects();
+        collectibleObjects = collectableLayerObjects.getByType(RectangleMapObject.class);
+        scaleObjects(collectibleObjects);
     }
 
     private void scaleObjects(Array<RectangleMapObject> mapObjects) {
@@ -102,4 +114,8 @@ public class LevelInitialize {
     public Array<RectangleMapObject> getRectangleWallObjects() {
         return wallObjects;
     }
+
+    public Array<RectangleMapObject> getHidingObjects() { return hidingObjects; }
+
+    public Array<RectangleMapObject> getCollectibleObjects() { return collectibleObjects; }
 }
