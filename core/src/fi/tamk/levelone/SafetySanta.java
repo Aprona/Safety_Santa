@@ -26,10 +26,16 @@ public class SafetySanta{
     private boolean canMove = true;
     private boolean canChangeFloor = true;
     public boolean floorChangeInProgress = false;
+    public boolean hidingInProgress = false;
+    public boolean hiding = false;
     private boolean floorUp;
     private SpriteBatch batch;
     private boolean actionButtonPressed = false;
+    private boolean actionButtonAvailable = true;
     private Vector3 touchPos;
+    boolean fadingIn = false;
+    boolean fadingOut = false;
+    boolean collision = false;
 
     public SafetySanta (GameScreen gameScreen, SpriteBatch b) {
         this.gameScreen = gameScreen;
@@ -41,77 +47,118 @@ public class SafetySanta{
     }
 
     public void update() {
-        canMove = true;
         actionButtonPressed = false;
+
         if (Gdx.input.isTouched()) {
             float realX = Gdx.input.getX();
             float realY = Gdx.input.getY();
-
             touchPos.x = realX;
             touchPos.y = realY;
             gameScreen.game.getCamera().unproject(touchPos);
 
-            if (touchPos.x > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() &&
-                    touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
-                if (!actionButtonPressed){
-                    Gdx.app.log("ActionButton", "Pressed");
-                    actionButtonPressed = true;
+            if (actionButtonAvailable) {
+                if (!floorChangeInProgress) {
+                    if (touchPos.x > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() &&
+                            touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
+                        if (!actionButtonPressed) {
+                            Gdx.app.log("ActionButton", "Pressed");
+                            actionButtonPressed = true;
+                            actionButtonAvailable = false;
+                            checkHideAction();
+                            checkFloorChange();
+                        }
+                    }
                 }
             }
 
-            if (touchPos.x > gameScreen.hud.getButtonLeftRect().x && touchPos.x < gameScreen.hud.getButtonLeftRect().x + gameScreen.hud.getButtonLeftRect().getWidth() &&
-                    touchPos.y > gameScreen.hud.getButtonLeftRect().y && touchPos.y < gameScreen.hud.getButtonLeftRect().y + gameScreen.hud.getButtonLeftRect().getHeight()) {
 
-                for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
-                    Rectangle rectangle = rectangleObject.getRectangle();
-                    if (rectangle.contains(santaRectangle.x - 0.05f,
-                            (santaRectangle.y + santaRectangle.height / 2))) {
-                        canMove = false;
+                if (touchPos.x > gameScreen.hud.getButtonLeftRect().x && touchPos.x < gameScreen.hud.getButtonLeftRect().x + gameScreen.hud.getButtonLeftRect().getWidth() &&
+                        touchPos.y > gameScreen.hud.getButtonLeftRect().y && touchPos.y < gameScreen.hud.getButtonLeftRect().y + gameScreen.hud.getButtonLeftRect().getHeight()) {
+                    for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
+                        Rectangle rectangle = rectangleObject.getRectangle();
+                        if (rectangle.contains(santaRectangle.x - 0.05f,
+                                (santaRectangle.y + santaRectangle.height / 2))) {
+                                canMove = false;
+                        }
+                    }
+
+                    if (canMove) {
+                        santaRectangle.x -= santaSpeed * delta;
+                        goRight = false;
+                    }
+
+                }
+
+                if (touchPos.x > gameScreen.hud.getButtonRightRect().x && touchPos.x < gameScreen.hud.getButtonRightRect().x + gameScreen.hud.getButtonRightRect().getWidth() &&
+                        touchPos.y > gameScreen.hud.getButtonRightRect().y && touchPos.y < gameScreen.hud.getButtonRightRect().y + gameScreen.hud.getButtonRightRect().getHeight()) {
+                    for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
+                        Rectangle rectangle = rectangleObject.getRectangle();
+
+                        if (rectangle.contains(santaRectangle.x + santaRectangle.width + 0.05f,
+                                santaRectangle.y + (santaRectangle.height / 2))) {
+                            canMove = false;
+                        }
+                    }
+
+                    if (canMove) {
+                        santaRectangle.x += santaSpeed * delta;
+                        goRight = true;
                     }
                 }
 
-                if (canMove) {
-                    santaRectangle.x -= santaSpeed * delta;
-                    goRight = false;
-                }
-            }
-
-            if (touchPos.x > gameScreen.hud.getButtonRightRect().x && touchPos.x < gameScreen.hud.getButtonRightRect().x + gameScreen.hud.getButtonRightRect().getWidth() &&
-                    touchPos.y > gameScreen.hud.getButtonRightRect().y && touchPos.y < gameScreen.hud.getButtonRightRect().y + gameScreen.hud.getButtonRightRect().getHeight()) {
-
-                for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
-                    Rectangle rectangle = rectangleObject.getRectangle();
-                    if (rectangle.contains(santaRectangle.x + santaRectangle.width + 0.05f,
-                            santaRectangle.y + (santaRectangle.height / 2))) {
-                        canMove = false;
-                    }
-                }
-
-                if (canMove) {
-                    santaRectangle.x += santaSpeed * delta;
-                    goRight = true;
-                }
-            }
         }
-    }
-
-    public void checkInput() {
-
+        canMove = true;
     }
 
     public void checkActions() {
-        checkFloorChange();
+        // checkFloorChange();
+        // checkCollectingObjects(); // Metodin tekeminen kesken.
 
         if (floorChangeInProgress) {
             if (floorUp) {
                 changeFloorUp(batch);
-                // Gdx.app.log("mennään", "ylös");
             } else {
                 changeFloorDown(batch);
-                Gdx.app.log("mennään", "alas");
             }
+        } else if (hidingInProgress) {
+            if (alpha >= 0.05 && !fadingIn) {
+                alpha -= 0.05f;
+                fadingOut = true;
+            } else if (alpha <= 0.05 && fadingOut) {
+                fadingOut = false;
+                alpha = 0;
+                actionButtonAvailable = true;
+            } else if (alpha == 0 && !hiding && !fadingIn) {
+                fadingIn = true;
+            } else if (fadingIn && alpha < 1) {
+                alpha += 0.05f;
+            }else if (alpha >= 0.95 && fadingIn) {
+                fadingIn = false;
+                alpha = 1;
+                hidingInProgress = false;
+                actionButtonAvailable = true;
+                canMove = true;
+            }
+
+            draw(batch);
+
         } else {
             draw(batch);
+        }
+    }
+
+    private void checkHideAction() {
+        for (RectangleMapObject rectangleObject : gameScreen.initialize.getHidingObjects()) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+            if (getSantaRectangle().overlaps(rectangle)) {
+                if (!hiding) {
+                    hidingInProgress = true;
+                    hiding = true;
+                    canMove = false;
+                } else if (hiding && hidingInProgress && alpha == 0) {
+                    hiding = false;
+                }
+            }
         }
     }
 
@@ -147,6 +194,7 @@ public class SafetySanta{
                 @Override
                 public void run() {
                     canChangeFloor = true;
+                    actionButtonAvailable = true;
                 }
             }, 3);
         }
@@ -192,7 +240,7 @@ public class SafetySanta{
     }
 
     public void draw(SpriteBatch sp)  {
-        // batch.setColor(1f, 1f, 1f, alpha);
+        batch.setColor(1f, 1f, 1f, alpha);
         sp.draw(santaImg,
                 santaRectangle.x,
                 santaRectangle.y,
@@ -254,12 +302,12 @@ public class SafetySanta{
         }
 
         if (alpha < 1f && !fading) {
-            Gdx.app.log("Going up", "fade out");
+            // Gdx.app.log("Going up", "fade out");
             alpha += 0.05f;
         }
 
         if (alpha < 0.05f && fading && movement <= 2.23f && floorChangeInProgress) {
-            Gdx.app.log("Going up", "moving");
+            // Gdx.app.log("Going up", "moving");
             santaRectangle.y += 0.04f;
             movement += 0.04f;
         }
@@ -269,16 +317,16 @@ public class SafetySanta{
         }
 
         if (!fading && alpha > 0.95f) {
-            Gdx.app.log("Going up", "näkyvissä");
+            // Gdx.app.log("Going up", "näkyvissä");
             fading = true;
             alpha = 1;
             movement = 0;
             floorChangeInProgress = false;
+            actionButtonAvailable = true;
         }
     }
 
     public void changeFloorDown(SpriteBatch batch) {
-
         batch.setColor(1f, 1f, 1f, alpha);
         batch.draw(santaImg,
                 santaRectangle.x,
@@ -297,12 +345,12 @@ public class SafetySanta{
         }
 
         if (alpha < 1f && !fading) {
-            Gdx.app.log("Going down", "fade in");
+            // Gdx.app.log("Going down", "fade in");
             alpha += 0.05f;
         }
 
         if (alpha < 0.05f && fading && movement <= 2.23f && floorChangeInProgress) {
-            Gdx.app.log("Going down", "moving");
+            // Gdx.app.log("Going down", "moving");
             santaRectangle.y -= 0.04f;
             movement += 0.04f;
         }
@@ -313,11 +361,12 @@ public class SafetySanta{
         }
 
         if (!fading && alpha > 0.95f) {
-            Gdx.app.log("Going down", "näkyvissä");
+            // Gdx.app.log("Going down", "näkyvissä");
             fading = true;
             alpha = 1;
             movement = 0;
             floorChangeInProgress = false;
+            actionButtonAvailable = true;
         }
     }
 }
