@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-up" width="50" height="29" tilewidth="32" tileheight="32" nextobjectid="53">
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="50" height="29" tilewidth="32" tileheight="32" nextobjectid="56">
  <tileset firstgid="1" name="safety_santa_tilemap_32px" tilewidth="32" tileheight="32" tilecount="289" columns="17">
   <image source="safety_santa_tilemap_32px.png" width="544" height="544"/>
  </tileset>
@@ -111,6 +111,8 @@
   <object id="40" x="960" y="0" width="32" height="256"/>
   <object id="41" x="1408" y="480" width="32" height="448"/>
   <object id="45" x="1184" y="256" width="32" height="224"/>
+  <object id="53" x="1536" y="96" width="32" height="128"/>
+  <object id="55" x="1536" y="320" width="32" height="128"/>
  </objectgroup>
  <objectgroup name="stairway_down" visible="0">
   <object id="7" x="416" y="192" width="32" height="32"/>
