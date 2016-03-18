@@ -4,6 +4,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
@@ -20,6 +21,7 @@ public class LevelInitialize {
     Array<RectangleMapObject> wallObjects;
     Array<RectangleMapObject> hidingObjects;
     Array<RectangleMapObject> collectibleObjects;
+    TiledMapTileLayer collectibleCells;
     TiledMap tiledMap;
 
     public LevelInitialize(GameScreen gameScreen) {
@@ -83,6 +85,8 @@ public class LevelInitialize {
         MapObjects collectableLayerObjects = collectableObjectsLayer.getObjects();
         collectibleObjects = collectableLayerObjects.getByType(RectangleMapObject.class);
         scaleObjects(collectibleObjects);
+
+        collectibleCells = (TiledMapTileLayer) tiledMap.getLayers().get("collectable_sprites");
     }
 
     private void scaleObjects(Array<RectangleMapObject> mapObjects) {
@@ -118,4 +122,6 @@ public class LevelInitialize {
     public Array<RectangleMapObject> getHidingObjects() { return hidingObjects; }
 
     public Array<RectangleMapObject> getCollectibleObjects() { return collectibleObjects; }
+
+    public TiledMapTileLayer getCollectibleSprites() { return collectibleCells; }
 }

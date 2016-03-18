@@ -35,12 +35,12 @@ public class SafetySanta{
     private Vector3 touchPos;
     boolean fadingIn = false;
     boolean fadingOut = false;
-    boolean collision = false;
+    boolean noAction = false;
 
-    public SafetySanta (GameScreen gameScreen, SpriteBatch b) {
+    public SafetySanta (GameScreen gameScreen, SpriteBatch batch) {
         this.gameScreen = gameScreen;
         fading = true;
-        this.batch = b;
+        this.batch = batch;
         santaImg = new Texture("safety_santa_player.png");
         santaRectangle = new Rectangle(0,0,santaImg.getWidth() / 100f, santaImg.getHeight() / 100f);
         touchPos = new Vector3(0, 0, 0);
@@ -66,6 +66,7 @@ public class SafetySanta{
                             actionButtonAvailable = false;
                             checkHideAction();
                             checkFloorChange();
+                            // checkCollectibleAction(); // Metodin tekeminen kesken.
                         }
                     }
                 }
@@ -111,39 +112,39 @@ public class SafetySanta{
     }
 
     public void checkActions() {
-        // checkFloorChange();
-        // checkCollectingObjects(); // Metodin tekeminen kesken.
-
         if (floorChangeInProgress) {
             if (floorUp) {
+                // changeFloorUp();
                 changeFloorUp(batch);
             } else {
                 changeFloorDown(batch);
             }
         } else if (hidingInProgress) {
-            if (alpha >= 0.05 && !fadingIn) {
-                alpha -= 0.05f;
-                fadingOut = true;
-            } else if (alpha <= 0.05 && fadingOut) {
-                fadingOut = false;
-                alpha = 0;
-                actionButtonAvailable = true;
-            } else if (alpha == 0 && !hiding && !fadingIn) {
-                fadingIn = true;
-            } else if (fadingIn && alpha < 1) {
-                alpha += 0.05f;
-            }else if (alpha >= 0.95 && fadingIn) {
-                fadingIn = false;
-                alpha = 1;
-                hidingInProgress = false;
-                actionButtonAvailable = true;
-                canMove = true;
-            }
-
+            hidingInProgress();
             draw(batch);
-
         } else {
             draw(batch);
+        }
+    }
+
+    private void hidingInProgress() {
+        if (alpha >= 0.05 && !fadingIn) {
+            alpha -= 0.05f;
+            fadingOut = true;
+        } else if (alpha <= 0.05 && fadingOut) {
+            fadingOut = false;
+            alpha = 0;
+            actionButtonAvailable = true;
+        } else if (alpha == 0 && !hiding && !fadingIn) {
+            fadingIn = true;
+        } else if (fadingIn && alpha < 1) {
+            alpha += 0.05f;
+        } else if (alpha >= 0.95 && fadingIn) {
+            fadingIn = false;
+            alpha = 1;
+            hidingInProgress = false;
+            actionButtonAvailable = true;
+            canMove = true;
         }
     }
 
@@ -197,45 +198,6 @@ public class SafetySanta{
                     actionButtonAvailable = true;
                 }
             }, 3);
-        }
-    }
-
-    public void moveSantaKeyboard() {
-        canMove = true;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-
-            for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
-                Rectangle rectangle = rectangleObject.getRectangle();
-                if (rectangle.contains(santaRectangle.x - 0.05f,
-                        (santaRectangle.y + santaRectangle.height / 2))) {
-                    canMove = false;
-                }
-            }
-
-            if (canMove) {
-                santaRectangle.x -= santaSpeed * delta;
-                goRight = false;
-            } else {
-
-            }
-        }
-
-        canMove = true;
-
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-
-            for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
-                Rectangle rectangle = rectangleObject.getRectangle();
-                if (rectangle.contains(santaRectangle.x + santaRectangle.width + 0.05f,
-                        santaRectangle.y + (santaRectangle.height / 2))) {
-                    canMove = false;
-                }
-            }
-
-            if (canMove) {
-                santaRectangle.x += santaSpeed * delta;
-                goRight = true;
-            }
         }
     }
 
@@ -369,4 +331,27 @@ public class SafetySanta{
             actionButtonAvailable = true;
         }
     }
+
+    /*
+    private void checkCollectibleAction() {
+        for (RectangleMapObject rectangleObject : gameScreen.initialize.getCollectibleObjects()) {
+            Rectangle rectangle = rectangleObject.getRectangle();
+            if (getSantaRectangle().overlaps(rectangle)) {
+                // clearCollectible();
+            }
+        }
+    }
+
+
+    private void clearCollectible() {
+        int indexX = (int) (santaRectangle.x / 0.32f);
+        int indexY = (int) (santaRectangle.y / 0.32f);
+        Gdx.app.log(String.valueOf(santaRectangle.x), String.valueOf(santaRectangle.y));
+        Gdx.app.log("clearCollectible", String.valueOf(indexX));
+        Gdx.app.log("", String.valueOf(indexY));
+
+        gameScreen.initialize.getCollectibleSprites().setCell(indexX, indexY, null);
+
+    }
+    */
 }
