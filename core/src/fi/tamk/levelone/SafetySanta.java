@@ -30,7 +30,6 @@ public class SafetySanta{
     public boolean hiding = false;
     private boolean floorUp;
     private SpriteBatch batch;
-    private boolean actionButtonPressed = false;
     private boolean actionButtonAvailable = true;
     private Vector3 touchPos;
     boolean fadingIn = false;
@@ -46,25 +45,26 @@ public class SafetySanta{
     }
 
     public void update() {
-            if (Gdx.input.justTouched()) {
-                float realX = Gdx.input.getX();
-                float realY = Gdx.input.getY();
-                touchPos.x = realX;
-                touchPos.y = realY;
-                gameScreen.game.getCamera().unproject(touchPos);
-                if (actionButtonAvailable) {
-                    if (!floorChangeInProgress) {
-                        if (touchPos.x > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() && touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
-                            actionButtonPressed = true;
-                            actionButtonAvailable = false;
-                            checkHideAction();
-                            checkFloorChange();
-                            // checkCollectibleAction(); // Metodin tekeminen kesken.
-                        }
+        if (Gdx.input.justTouched()) {
+            float realX = Gdx.input.getX();
+            float realY = Gdx.input.getY();
+            touchPos.x = realX;
+            touchPos.y = realY;
+            gameScreen.game.getCamera().unproject(touchPos);
+            if (actionButtonAvailable) {
+                if (!floorChangeInProgress) {
+                    if (touchPos.x > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() &&
+                            touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
+                        actionButtonAvailable = false;
+                        checkHideAction();
+                        checkFloorChange();
+                        // checkCollectibleAction(); // Metodin tekeminen kesken.
                     }
                 }
             }
+        }
 
+        if (canMove) {
             if (Gdx.input.isTouched()) {
                 float realX = Gdx.input.getX();
                 float realY = Gdx.input.getY();
@@ -72,48 +72,47 @@ public class SafetySanta{
                 touchPos.y = realY;
                 gameScreen.game.getCamera().unproject(touchPos);
 
+                boolean canMoveLeft = true;
                 if (touchPos.x > gameScreen.hud.getButtonLeftRect().x && touchPos.x < gameScreen.hud.getButtonLeftRect().x + gameScreen.hud.getButtonLeftRect().getWidth() &&
                         touchPos.y > gameScreen.hud.getButtonLeftRect().y && touchPos.y < gameScreen.hud.getButtonLeftRect().y + gameScreen.hud.getButtonLeftRect().getHeight()) {
                     for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
                         Rectangle rectangle = rectangleObject.getRectangle();
                         if (rectangle.contains(santaRectangle.x - 0.05f,
                                 (santaRectangle.y + santaRectangle.height / 2))) {
-                            canMove = false;
+                            canMoveLeft = false;
                         }
                     }
 
-                    if (canMove) {
+                    if (canMoveLeft || goRight) {
                         santaRectangle.x -= santaSpeed * delta;
                         goRight = false;
                     }
 
                 }
 
+                boolean canMoveRight = true;
                 if (touchPos.x > gameScreen.hud.getButtonRightRect().x && touchPos.x < gameScreen.hud.getButtonRightRect().x + gameScreen.hud.getButtonRightRect().getWidth() &&
                         touchPos.y > gameScreen.hud.getButtonRightRect().y && touchPos.y < gameScreen.hud.getButtonRightRect().y + gameScreen.hud.getButtonRightRect().getHeight()) {
                     for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleWallObjects()) {
                         Rectangle rectangle = rectangleObject.getRectangle();
-
                         if (rectangle.contains(santaRectangle.x + santaRectangle.width + 0.05f,
                                 santaRectangle.y + (santaRectangle.height / 2))) {
-                            canMove = false;
+                            canMoveRight = false;
                         }
                     }
 
-                    if (canMove) {
+                    if (canMoveRight || !goRight) {
                         santaRectangle.x += santaSpeed * delta;
                         goRight = true;
                     }
                 }
             }
-
-        canMove = true;
+        }
     }
 
     public void checkActions() {
         if (floorChangeInProgress) {
             if (floorUp) {
-                // changeFloorUp();
                 changeFloorUp(batch);
             } else {
                 changeFloorDown(batch);
@@ -171,6 +170,7 @@ public class SafetySanta{
                     canChangeFloor = false;
                     floorChangeInProgress = true;
                     floorUp = true;
+                    canMove = false;
                 }
             }
         }
@@ -183,6 +183,7 @@ public class SafetySanta{
                     canChangeFloor = false;
                     floorChangeInProgress = true;
                     floorUp = false;
+                    canMove = false;
                 }
             }
         }
@@ -282,6 +283,7 @@ public class SafetySanta{
             movement = 0;
             floorChangeInProgress = false;
             actionButtonAvailable = true;
+            canMove = true;
         }
     }
 
@@ -326,6 +328,7 @@ public class SafetySanta{
             movement = 0;
             floorChangeInProgress = false;
             actionButtonAvailable = true;
+            canMove = true;
         }
     }
 
