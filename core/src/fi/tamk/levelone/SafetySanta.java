@@ -32,8 +32,9 @@ public class SafetySanta{
     private SpriteBatch batch;
     private boolean actionButtonAvailable = true;
     private Vector3 touchPos;
-    boolean fadingIn = false;
-    boolean fadingOut = false;
+    private boolean fadingIn = false;
+    private boolean fadingOut = false;
+    private boolean actionStarted;
 
     public SafetySanta (GameScreen gameScreen, SpriteBatch batch) {
         this.gameScreen = gameScreen;
@@ -51,14 +52,18 @@ public class SafetySanta{
             touchPos.x = realX;
             touchPos.y = realY;
             gameScreen.game.getCamera().unproject(touchPos);
+
             if (actionButtonAvailable) {
                 if (!floorChangeInProgress) {
                     if (touchPos.x > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() &&
                             touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
-                        actionButtonAvailable = false;
-                        checkHideAction();
+                        actionStarted = checkHideAction();
                         checkFloorChange();
                         // checkCollectibleAction(); // Metodin tekeminen kesken.
+
+                        if (actionStarted) {
+                            actionButtonAvailable = false;
+                        }
                     }
                 }
             }
@@ -87,7 +92,6 @@ public class SafetySanta{
                         santaRectangle.x -= santaSpeed * delta;
                         goRight = false;
                     }
-
                 }
 
                 boolean canMoveRight = true;
@@ -146,10 +150,12 @@ public class SafetySanta{
         }
     }
 
-    private void checkHideAction() {
+    private boolean checkHideAction() {
+        actionStarted = false;
         for (RectangleMapObject rectangleObject : gameScreen.initialize.getHidingObjects()) {
             Rectangle rectangle = rectangleObject.getRectangle();
             if (getSantaRectangle().overlaps(rectangle)) {
+                actionStarted = true;
                 if (!hiding) {
                     hidingInProgress = true;
                     hiding = true;
@@ -159,12 +165,13 @@ public class SafetySanta{
                 }
             }
         }
+        return actionStarted;
     }
 
     private void checkFloorChange() {
+
         for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleUpObjects()) {
             Rectangle rectangle = rectangleObject.getRectangle();
-
             if (canChangeFloor) {
                 if (rectangle.overlaps(getSantaRectangle())) {
                     canChangeFloor = false;
@@ -177,7 +184,6 @@ public class SafetySanta{
 
         for (RectangleMapObject rectangleObject : gameScreen.initialize.getRectangleDownObjects()) {
             Rectangle rectangle = rectangleObject.getRectangle();
-
             if (canChangeFloor) {
                 if (getSantaRectangle().overlaps(rectangle)) {
                     canChangeFloor = false;
@@ -188,14 +194,14 @@ public class SafetySanta{
             }
         }
 
-        if (!canChangeFloor) {
+        if (!canChangeFloor) { //!canChangeFloor
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     canChangeFloor = true;
                     actionButtonAvailable = true;
                 }
-            }, 3);
+            }, 2);
         }
     }
 

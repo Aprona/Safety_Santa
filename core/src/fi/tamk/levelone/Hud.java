@@ -18,7 +18,7 @@ public class Hud {
     private Texture buttonRightImg;
     private Rectangle buttonRightRect;
 
-    private float PADDING = 0.2f;
+    private float PADDING = 0.3f;
 
     public Hud(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
@@ -73,6 +73,8 @@ public class Hud {
     }
 
     private void drawButtons (SpriteBatch batch) {
+        batch.setColor(1f, 1f, 1f, 0.5f);
+
         batch.draw(
                 buttonActionImg,
                 buttonActionRect.x,
