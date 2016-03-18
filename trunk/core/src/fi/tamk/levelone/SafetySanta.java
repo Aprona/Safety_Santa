@@ -35,7 +35,6 @@ public class SafetySanta{
     private Vector3 touchPos;
     boolean fadingIn = false;
     boolean fadingOut = false;
-    boolean noAction = false;
 
     public SafetySanta (GameScreen gameScreen, SpriteBatch batch) {
         this.gameScreen = gameScreen;
@@ -47,21 +46,15 @@ public class SafetySanta{
     }
 
     public void update() {
-        actionButtonPressed = false;
-
-        if (Gdx.input.isTouched()) {
-            float realX = Gdx.input.getX();
-            float realY = Gdx.input.getY();
-            touchPos.x = realX;
-            touchPos.y = realY;
-            gameScreen.game.getCamera().unproject(touchPos);
-
-            if (actionButtonAvailable) {
-                if (!floorChangeInProgress) {
-                    if (touchPos.x > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() &&
-                            touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
-                        if (!actionButtonPressed) {
-                            Gdx.app.log("ActionButton", "Pressed");
+            if (Gdx.input.justTouched()) {
+                float realX = Gdx.input.getX();
+                float realY = Gdx.input.getY();
+                touchPos.x = realX;
+                touchPos.y = realY;
+                gameScreen.game.getCamera().unproject(touchPos);
+                if (actionButtonAvailable) {
+                    if (!floorChangeInProgress) {
+                        if (touchPos.x > gameScreen.hud.getButtonActionRect().x && touchPos.x < gameScreen.hud.getButtonActionRect().x + gameScreen.hud.getButtonActionRect().getWidth() && touchPos.y > gameScreen.hud.getButtonActionRect().y && touchPos.y < gameScreen.hud.getButtonActionRect().y + gameScreen.hud.getButtonActionRect().getHeight()) {
                             actionButtonPressed = true;
                             actionButtonAvailable = false;
                             checkHideAction();
@@ -72,6 +65,12 @@ public class SafetySanta{
                 }
             }
 
+            if (Gdx.input.isTouched()) {
+                float realX = Gdx.input.getX();
+                float realY = Gdx.input.getY();
+                touchPos.x = realX;
+                touchPos.y = realY;
+                gameScreen.game.getCamera().unproject(touchPos);
 
                 if (touchPos.x > gameScreen.hud.getButtonLeftRect().x && touchPos.x < gameScreen.hud.getButtonLeftRect().x + gameScreen.hud.getButtonLeftRect().getWidth() &&
                         touchPos.y > gameScreen.hud.getButtonLeftRect().y && touchPos.y < gameScreen.hud.getButtonLeftRect().y + gameScreen.hud.getButtonLeftRect().getHeight()) {
@@ -79,7 +78,7 @@ public class SafetySanta{
                         Rectangle rectangle = rectangleObject.getRectangle();
                         if (rectangle.contains(santaRectangle.x - 0.05f,
                                 (santaRectangle.y + santaRectangle.height / 2))) {
-                                canMove = false;
+                            canMove = false;
                         }
                     }
 
@@ -106,8 +105,8 @@ public class SafetySanta{
                         goRight = true;
                     }
                 }
+            }
 
-        }
         canMove = true;
     }
 
@@ -168,8 +167,7 @@ public class SafetySanta{
             Rectangle rectangle = rectangleObject.getRectangle();
 
             if (canChangeFloor) {
-                if (rectangle.overlaps(getSantaRectangle()) &&
-                        (Gdx.input.isKeyJustPressed(Input.Keys.H) || actionButtonPressed)) {
+                if (rectangle.overlaps(getSantaRectangle())) {
                     canChangeFloor = false;
                     floorChangeInProgress = true;
                     floorUp = true;
@@ -181,8 +179,7 @@ public class SafetySanta{
             Rectangle rectangle = rectangleObject.getRectangle();
 
             if (canChangeFloor) {
-                if (getSantaRectangle().overlaps(rectangle) &&
-                        (Gdx.input.isKeyJustPressed(Input.Keys.H) || actionButtonPressed)) {
+                if (getSantaRectangle().overlaps(rectangle)) {
                     canChangeFloor = false;
                     floorChangeInProgress = true;
                     floorUp = false;
