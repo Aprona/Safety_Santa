@@ -11,6 +11,7 @@ public class Main extends Game {
     MainMenuScreen mainMenu;
 	GameScreen gameScreen;
     LevelSelectionScreen levelSelectionScreen;
+    OptionsScreen optionsScreen;
 	public OrthographicCamera camera;
 
 	@Override
@@ -39,7 +40,11 @@ public class Main extends Game {
     public void changeScreen(String screen) {
 
         if (screen.equalsIgnoreCase("mainMenu")) {
-            mainMenu = new MainMenuScreen(this);
+
+            if (mainMenu == null) {
+                mainMenu = new MainMenuScreen(this);
+            }
+
             setScreen(mainMenu);
         }
 
@@ -54,9 +59,22 @@ public class Main extends Game {
 
         }
 
+        if (screen.equalsIgnoreCase("optionsScreen")) {
+
+            if (optionsScreen == null) {
+                optionsScreen = new OptionsScreen(this);
+            }
+
+            setScreen(optionsScreen);
+        }
+
         if (screen.equalsIgnoreCase("levelSelectionScreen")) {
-            levelSelectionScreen = new LevelSelectionScreen(this);
-            setScreen(gameScreen);
+
+            if (levelSelectionScreen == null) {
+                levelSelectionScreen = new LevelSelectionScreen(this);
+            }
+
+            setScreen(levelSelectionScreen);
         }
     }
 

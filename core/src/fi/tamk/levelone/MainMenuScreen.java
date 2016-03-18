@@ -23,6 +23,7 @@ public class MainMenuScreen implements Screen {
     private Texture playButton;
     private Texture optionsButton;
     private Texture exitButton;
+    private Texture mainMenuBackground;
     private Rectangle playButtonRectangle;
     private Rectangle optionsButtonRectangle;
     private Rectangle exitButtonRectangle;
@@ -32,14 +33,19 @@ public class MainMenuScreen implements Screen {
         this.game = g;
         this.batch = game.getBatch();
         this.camera = game.getCamera();
-        exitButton = new Texture("testExitButton.png");
-        playButton = new Texture("testPlayButton.png");
-        optionsButton = new Texture("testOptionsButton.png");
+        exitButton = new Texture("exitButton.png");
+        playButton = new Texture("playButton.png");
+        optionsButton = new Texture("optionsButton.png");
+        mainMenuBackground = new Texture("mainMenuBackground.png");
+
         vector = new Vector3(0, 0, 0);
 
-        playButtonRectangle = new Rectangle(3, 2.2f, 200/100f, 50/100f);
-        optionsButtonRectangle = new Rectangle(3, 1.6f, 200/100f, 50/100f);
-        exitButtonRectangle = new Rectangle(3, 1, 200/100f, 50/100f);
+        playButtonRectangle = new Rectangle(2.25f, 2.2f, playButton.getWidth() /100f,
+                playButton.getHeight()/100f);
+        optionsButtonRectangle = new Rectangle(2.25f, 1.2f, optionsButton.getWidth()/100f,
+                optionsButton.getHeight()/100f);
+        exitButtonRectangle = new Rectangle(0.2f, 0.2f, exitButton.getWidth()/100f,
+                exitButton.getHeight()/100f);
 
     }
 
@@ -57,26 +63,30 @@ public class MainMenuScreen implements Screen {
         camera.unproject(vector);
 
         batch.begin();
-        batch.draw(playButton, playButtonRectangle.x, playButtonRectangle.y, 2, 0.5f);
-        batch.draw(optionsButton, optionsButtonRectangle.x, optionsButtonRectangle.y, 2, 0.5f);
-        batch.draw(exitButton, exitButtonRectangle.x, exitButtonRectangle.y, 2, 0.5f);
+        batch.draw(mainMenuBackground, 0, 0, 8, 4.8f);
+        batch.draw(playButton, playButtonRectangle.x, playButtonRectangle.y,
+                playButton.getWidth()/100f, playButton.getHeight()/100f);
+        batch.draw(optionsButton, optionsButtonRectangle.x, optionsButtonRectangle.y,
+                optionsButton.getWidth()/100f, optionsButton.getHeight()/100f);
+        batch.draw(exitButton, exitButtonRectangle.x, exitButtonRectangle.y,
+                exitButton.getWidth()/100f, exitButton.getHeight()/100f);
         batch.end();
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             System.out.println(vector.x + ", " + vector.y);
         }
 
         if (playButtonRectangle.contains(vector.x, vector.y) &&
-                Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            game.changeScreen("gameScreen");
+                Gdx.input.justTouched()) {
+            game.changeScreen("levelSelectionScreen");
         }
 
-        if (playButtonRectangle.contains(vector.x, vector.y) &&
-                Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if (optionsButtonRectangle.contains(vector.x, vector.y) &&
+                Gdx.input.justTouched()) {
             game.changeScreen("optionsScreen");
         }
 
         if (exitButtonRectangle.contains(vector.x, vector.y) &&
-                Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                Gdx.input.justTouched()) {
             Gdx.app.exit();
         }
     }
